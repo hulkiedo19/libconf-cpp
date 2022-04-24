@@ -4,19 +4,15 @@
 
 int main() {
 	std::string filename = "D:\\text.txt";
+	std::string filename2 = "D:\\text2.txt";
 
-	libconf::ConfigIO config(filename);
+	libconf::config_io config;
 
-	config.ShowBuffer();
+	config.fill_buffer(filename2);
 
-	/*
-	std::string line = "hello_world2\n";
-	if (!config.DeleteLine(line)) {
-		std::cout << "this line does not exists" << std::endl;
-	}
+	config.show_buffer();
 
-	config.ShowBuffer();
-	*/
+	config.dump_buffer(filename2);
 
 	return 0;
 }

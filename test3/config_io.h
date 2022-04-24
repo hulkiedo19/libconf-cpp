@@ -2,20 +2,31 @@
 
 namespace libconf {
 
-	class ConfigIO {
+	class config_io {
 		std::string filename;
 		std::string buffer;
 	public:
-		ConfigIO(std::string filename);
-		~ConfigIO();
+		config_io();
+		config_io(std::string filename);
+		~config_io();
 
-		std::string GetBuffer();
-		void ShowBuffer();
+		// buffer
+		std::string get_buffer();
+		void show_buffer();
+		bool fill_buffer(std::string filename);
 
-		bool AppendLine(std::string data);
+		bool dump_buffer();
+		bool dump_buffer(std::string filename);
 
-		bool DeleteLine(std::string line);
-		bool DeleteLine(int line_number);
+		// values
+		bool append_value(std::string name, std::string value);
+		bool delete_value(std::string name);
+
+		// lines
+		bool append_line(std::string data);
+
+		bool delete_line(std::string line);
+		bool delete_line(int line_number);
 
 		//std::string ReadLine();
 	};

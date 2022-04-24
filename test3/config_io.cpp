@@ -6,7 +6,12 @@
 
 namespace libconf {
 
-	ConfigIO::ConfigIO(std::string filename) {
+	config_io::config_io() {
+		this->buffer.clear();
+		this->filename.clear();
+	}
+
+	config_io::config_io(std::string filename) {
 		this->buffer = "";
 		this->filename = filename;
 
@@ -22,7 +27,11 @@ namespace libconf {
 		input_file.close();
 	}
 
-	ConfigIO::~ConfigIO() {
+	config_io::~config_io() {
+		if (this->filename.empty() || this->buffer.empty()) {
+			return;
+		}
+
 		std::ofstream output_file(this->filename);
 
 		if (output_file.is_open()) {
@@ -36,26 +45,111 @@ namespace libconf {
 		this->filename.clear();
 	}
 
-	std::string ConfigIO::GetBuffer() {
+	//--------------------------------------------------------------//
+
+	std::string config_io::get_buffer() {
+		if (this->buffer.empty()) {
+			return std::string();
+		}
+
 		return this->buffer;
 	}
 
-	void ConfigIO::ShowBuffer() {
+	void config_io::show_buffer() {
+		if (this->buffer.empty()) {
+			return;
+		}
+
 		std::cout << "buffer:" << std::endl << this->buffer << std::endl;
 	}
 
-	bool ConfigIO::AppendLine(std::string line) {
-		if (buffer.length() == 0) {
-			this->buffer = line + "\n";
+	bool config_io::dump_buffer() {
+		if (this->filename.empty() || this->buffer.empty()) {
+			return false;
 		}
-		else {
-			this->buffer += line + "\n";
+
+		std::ofstream output_file(this->filename);
+
+		if (output_file.is_open()) {
+			output_file << this->buffer;
+			output_file.flush();
 		}
+
+		output_file.close();
+
+		this->buffer.clear();
+		this->filename.clear();
+	}
+
+	bool config_io::dump_buffer(std::string filename) {
+		if (this->buffer.empty())
+			return false;
+
+		std::ofstream output_file(filename);
+
+		if (output_file.is_open()) {
+			output_file << this->buffer;
+			output_file.flush();
+		}
+
+		output_file.close();
+
+		this->buffer.clear();
+		this->filename.clear();
 		return true;
 	}
 
-	bool ConfigIO::DeleteLine(std::string line) {
-		if (this->buffer.length() == 0)
+	bool config_io::fill_buffer(std::string filename) {
+		if (!this->buffer.empty())
+			return false;
+
+		this->buffer = "";
+		this->filename = filename;
+
+		std::ifstream input_file(this->filename);
+
+		if (input_file.is_open()) {
+			std::string line;
+			while (std::getline(input_file, line)) {
+				buffer += (line + "\n");
+			}
+		}
+
+		input_file.close();
+		return true;
+	}
+
+	//--------------------------------------------------------------//
+
+	bool config_io::append_value(std::string name, std::string value) {
+		std::string variable = name + "=" + value + "\n";
+		if (this->buffer.empty()) {
+			this->buffer = variable;
+		} else {
+			this->buffer += variable;
+		}
+
+		return true;
+	}
+
+	bool config_io::delete_value(std::string name) {
+		return false;
+	}
+
+	//--------------------------------------------------------------//
+
+	bool config_io::append_line(std::string line) {
+		if (this->buffer.empty()) {
+			this->buffer = line + "\n";
+		} else {
+			this->buffer += line + "\n";
+		}
+
+		return true;
+	}
+
+	bool config_io::delete_line(std::string line) {
+		if (this->buffer.empty())
 			return false;
 
 		size_t position;
@@ -66,7 +160,7 @@ namespace libconf {
 		this->buffer.erase(position, line.length());
 	}
 
-	bool ConfigIO::DeleteLine(int line_number) {
+	bool config_io::delete_line(int line_number) {
 		//std::string delimeter = "\n";
 		//std::string sub_buffer = this->buffer;
 
