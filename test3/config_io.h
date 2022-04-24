@@ -1,19 +1,19 @@
 #pragma once
 
-class config_io {
+class ConfigIO {
 	std::string filename;
-	std::string line;
-
-	std::ifstream input_file;
-	std::ofstream output_file;
+	std::string buffer;
 public:
-	config_io(std::string filename);
+	ConfigIO(std::string filename);
+	~ConfigIO();
 
-	void AppendLine(std::string data);
+	std::string GetBuffer();
+	void ShowBuffer();
 
-	std::string ReadLine();
+	bool AppendLine(std::string data);
 
-	void ReadFile();
+	bool DeleteLine(std::string line);
+	bool DeleteLine(int line_number);
 
-	std::string ReadFileToString();
+	//std::string ReadLine();
 };

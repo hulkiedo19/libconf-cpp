@@ -5,20 +5,18 @@
 int main() {
 	std::string filename = "D:\\text.txt";
 
-	config_io config(filename);
+	ConfigIO config(filename);
+
+	config.ShowBuffer();
 
 	/*
-	config.ReadFile();
-	config.AppendLine("hello_world-1");
+	std::string line = "hello_world2\n";
+	if (!config.DeleteLine(line)) {
+		std::cout << "this line does not exists" << std::endl;
+	}
 
-	std::cout << std::endl;
-	config.ReadFile();
-
-	std::cout << config.ReadLine() << std::endl;
+	config.ShowBuffer();
 	*/
-
-	std::string fileData = config.ReadFileToString();
-	std::cout << "file data:" << std::endl << fileData << std::endl;
 
 	return 0;
 }
