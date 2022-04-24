@@ -5,7 +5,7 @@
 int main() {
 	std::string filename = "D:\\text.txt";
 
-	ConfigIO config(filename);
+	libconf::ConfigIO config(filename);
 
 	config.ShowBuffer();
 

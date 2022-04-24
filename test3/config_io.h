@@ -1,19 +1,23 @@
 #pragma once
 
-class ConfigIO {
-	std::string filename;
-	std::string buffer;
-public:
-	ConfigIO(std::string filename);
-	~ConfigIO();
+namespace libconf {
 
-	std::string GetBuffer();
-	void ShowBuffer();
+	class ConfigIO {
+		std::string filename;
+		std::string buffer;
+	public:
+		ConfigIO(std::string filename);
+		~ConfigIO();
 
-	bool AppendLine(std::string data);
+		std::string GetBuffer();
+		void ShowBuffer();
 
-	bool DeleteLine(std::string line);
-	bool DeleteLine(int line_number);
+		bool AppendLine(std::string data);
 
-	//std::string ReadLine();
-};
+		bool DeleteLine(std::string line);
+		bool DeleteLine(int line_number);
+
+		//std::string ReadLine();
+	};
+
+}
