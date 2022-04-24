@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <string>
 
 #include "config_io.h"
@@ -28,7 +29,7 @@ namespace libconf {
 	}
 
 	config_io::~config_io() {
-		if (this->filename.empty() || this->buffer.empty()) {
+		if (this->filename.empty()) {
 			return;
 		}
 
@@ -45,7 +46,7 @@ namespace libconf {
 		this->filename.clear();
 	}
 
-	//--------------------------------------------------------------//
+	//---------
 
 	std::string config_io::get_buffer() {
 		if (this->buffer.empty()) {
@@ -57,6 +58,7 @@ namespace libconf {
 
 	void config_io::show_buffer() {
 		if (this->buffer.empty()) {
+			std::cout << "buffer is empty" << std::endl;
 			return;
 		}
 
@@ -64,9 +66,8 @@ namespace libconf {
 	}
 
 	bool config_io::dump_buffer() {
-		if (this->filename.empty() || this->buffer.empty()) {
+		if (this->filename.empty())
 			return false;
-		}
 
 		std::ofstream output_file(this->filename);
 
@@ -82,9 +83,6 @@ namespace libconf {
 	}
 
 	bool config_io::dump_buffer(std::string filename) {
-		if (this->buffer.empty())
-			return false;
-
 		std::ofstream output_file(filename);
 
 		if (output_file.is_open()) {
@@ -119,7 +117,7 @@ namespace libconf {
 		return true;
 	}
 
-	//--------------------------------------------------------------//
+	//---------
 
 	bool config_io::append_value(std::string name, std::string value) {
 		std::string variable = name + "=" + value + "\n";
@@ -133,10 +131,73 @@ namespace libconf {
 	}
 
 	bool config_io::delete_value(std::string name) {
+		if (this->buffer.empty())
+			return false;
+
+		const char delimeter = '\n';
+
+		std::size_t line_count = 1;
+		std::size_t start_position = 0;
+		std::size_t end_position;
+		std::string token;
+
+		while ((end_position = this->buffer.find(delimeter, start_position)) != std::string::npos) {
+			token = this->buffer.substr(start_position, end_position - start_position);
+
+			if (token.find(name) != std::string::npos) {
+				if (this->buffer.length() == (end_position - start_position + 1)) {
+					this->buffer.clear();
+				} else {
+					this->buffer.erase(start_position, end_position - start_position + 1);
+				}
+
+				break;
+			}
+
+			start_position = end_position + 1;
+		}
+
+		return true;
+	}
+
+	bool config_io::replace_value(std::string name, std::string new_value) {
+		if (this->buffer.empty())
+			return false;
+
+		return true;
+	}
+
+	bool config_io::value_exists(std::string name) {
+		if (this->buffer.empty())
+			return false;
+
 		return false;
 	}
 
-	//--------------------------------------------------------------//
+	std::string config_io::get_value(std::string name) {
+		if (this->buffer.empty())
+			return std::string();
+
+		return std::string();
+	}
+
+	//---------
+
+	std::vector<std::string> config_io::get_split_value(std::string name) {
+		if (this->buffer.empty())
+			return std::vector<std::string>();
+
+		std::vector<std::string> split;
+
+		return split;
+	}
+
+	void config_io::show_split_value(std::string name) {
+		if (this->buffer.empty())
+			return;
+	}
+
+	//---------
 
 	bool config_io::append_line(std::string line) {
 		if (this->buffer.empty()) {
@@ -161,35 +222,31 @@ namespace libconf {
 	}
 
 	bool config_io::delete_line(int line_number) {
-		//std::string delimeter = "\n";
-		//std::string sub_buffer = this->buffer;
+		if (this->buffer.empty())
+			return false;
 
-		return false;
+		const char delimeter = '\n';
+
+		std::size_t line_count = 1;
+		std::size_t start_position = 0;
+		std::size_t end_position;
+
+		while ((end_position = this->buffer.find(delimeter, start_position)) != std::string::npos) {
+			if (line_count == line_number) {
+				if (this->buffer.length() == (end_position - start_position + 1)) {
+					this->buffer.clear();
+					break;
+				}
+
+				this->buffer.erase(start_position, end_position - start_position + 1);
+				break;
+			}
+
+			start_position = end_position + 1;
+			line_count++;
+		}
+
+		return true;
 	}
 
 }
-//std::string config_io::ReadLine() {
-//	bool is_clear_flag = false;
-//	static int current_line = 0;
-//
-//	input_file.open(filename);
-//
-//	if (input_file.is_open()) {
-//		int cur_line = 0;
-//
-//		do {
-//			if (!std::getline(input_file, line)) {
-//				std::cout << std::endl << "counter is cleared to 0" << std::endl;
-//				current_line = 0;
-//				is_clear_flag = true;
-//				break;
-//			}
-//		} while (cur_line++ < current_line);
-//	}
-//
-//	input_file.close();
-//
-//	if (!is_clear_flag) current_line++;
-//
-//	return line;
-//}
