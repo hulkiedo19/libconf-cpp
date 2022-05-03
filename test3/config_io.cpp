@@ -80,6 +80,7 @@ namespace libconf {
 
 		this->buffer.clear();
 		this->filename.clear();
+		return true;
 	}
 
 	bool config_io::dump_buffer(std::string filename) {
@@ -167,16 +168,54 @@ namespace libconf {
 		return true;
 	}
 
-	bool config_io::value_exists(std::string name) {
+	bool config_io::variable_exists(std::string name) {
 		if (this->buffer.empty())
 			return false;
 
-		return false;
+		std::string temp_var = name + "=";
+		if (this->buffer.find(temp_var) == std::string::npos) {
+			return false;
+		}
+
+		return true;
 	}
 
 	std::string config_io::get_value(std::string name) {
 		if (this->buffer.empty())
 			return std::string();
+
+		if (variable_exists(name) == false) {
+			return std::string();
+		}
+
+		/*
+		size_t position;
+		std::string temp_var = name + "=";
+		if ((position = this->buffer.find(temp_var)) == std::string::npos) {
+			return std::string();
+		}
+
+		size_t new_line_position;
+		if ((new_line_position = this->buffer.find_first_of('\n', position)) == std::string::npos) {
+			return std::string();
+		}
+
+		size_t delimiter_position;
+		if ((delimiter_position = this->buffer.find_first_of('=', position)) == std::string::npos) {
+			return std::string();
+		}
+
+		delimiter_position++;
+		new_line_position--;
+
+		std::cout << "DEBUG: " << delimiter_position << " " << new_line_position << std::endl;
+
+		std::string value = this->buffer.substr(delimiter_position, new_line_position);
+
+		std::cout << "DEBUG: " << value << std::endl << std::endl;
+
+		return value;
+		*/
 
 		return std::string();
 	}
@@ -219,6 +258,7 @@ namespace libconf {
 		}
 
 		this->buffer.erase(position, line.length());
+		return true;
 	}
 
 	bool config_io::delete_line(int line_number) {

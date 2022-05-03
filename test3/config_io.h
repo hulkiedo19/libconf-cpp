@@ -19,7 +19,7 @@ namespace libconf {
 		bool append_value(std::string name, std::string value);
 		bool delete_value(std::string name);
 		bool replace_value(std::string name, std::string new_value);
-		bool value_exists(std::string name);
+		bool variable_exists(std::string name);
 		std::string get_value(std::string name);
 
 		std::vector<std::string> get_split_value(std::string name);
